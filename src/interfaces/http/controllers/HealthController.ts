@@ -1,0 +1,8 @@
+// file: src/interfaces/http/controllers/HealthController.ts
+
+import { Request, Response } from "express";
+
+export function getHealth(_req: Request, res: Response): void {
+  res.json({ status: "ok" });
+}
+
