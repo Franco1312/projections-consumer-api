@@ -8,5 +8,8 @@ export type Environment = {
     projectionUpdatesConsumerUrl: string;
     region: string;
   };
+  s3: {
+    region: string;
+  };
 };
 

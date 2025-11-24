@@ -11,5 +11,8 @@ export const config: Environment = {
       "https://sqs.us-east-1.amazonaws.com/706341500093/projections-updates-api-consumer.fifo",
     region: "us-east-1",
   },
+  s3: {
+    region: "us-east-1",
+  },
 };
 
