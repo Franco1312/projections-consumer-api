@@ -4,6 +4,8 @@ import express, { Express } from "express";
 import { logger } from "@/infrastructure/logger/PinoLogger";
 import { LOG_EVENTS } from "@/infrastructure/logger/LOG_EVENTS";
 import { registerHealthRoutes } from "@/interfaces/http/routes/health.routes";
+import { registerProjectionUpdateRoutes } from "@/interfaces/http/routes/projection-update.routes";
+import { setupSwagger } from "@/infrastructure/http/swagger.config";
 
 export function createApp(): Express {
   const app = express();
@@ -24,7 +26,10 @@ export function createApp(): Express {
 
   const router = express.Router();
   registerHealthRoutes(router);
+  registerProjectionUpdateRoutes(router);
   app.use(router);
+
+  setupSwagger(app);
 
   return app;
 }
