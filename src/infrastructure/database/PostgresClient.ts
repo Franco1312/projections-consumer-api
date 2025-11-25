@@ -18,7 +18,7 @@ export class PostgresClient implements DatabaseClient {
       max: parseInt(process.env.DB_POOL_MAX || "10", 10),
       idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT || "30000", 10),
       connectionTimeoutMillis: parseInt(
-        process.env.DB_CONNECTION_TIMEOUT || "2000",
+        process.env.DB_CONNECTION_TIMEOUT || "10000",
         10
       ),
     });
