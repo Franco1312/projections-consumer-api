@@ -1,0 +1,82 @@
+[
+  {
+    "internal_series_code": "BCRA_BADLAR_PRIVADOS_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "32.187500"
+  },
+  {
+    "internal_series_code": "BCRA_BADLAR_PUBLICOS_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "31.625000"
+  },
+  {
+    "internal_series_code": "BCRA_BASE_MONETARIA_TOTAL_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "40819556.000000"
+  },
+  {
+    "internal_series_code": "BCRA_CIRCULANTE_PUBLICO_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "21397633.000000"
+  },
+  {
+    "internal_series_code": "BCRA_DEP_PESOS_PRIVADOS_TOTAL_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "93909439.000000"
+  },
+  {
+    "internal_series_code": "BCRA_DEP_PRIVADOS_PLAZO_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "93909439.000000"
+  },
+  {
+    "internal_series_code": "BCRA_LELIQ_NOTALIQ_ARS_BN_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "0.000000"
+  },
+  {
+    "internal_series_code": "BCRA_M2_PRIVADO_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "143146183.000000"
+  },
+  {
+    "internal_series_code": "BCRA_PASES_PASIVOS_ARS_BN_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "0.000000"
+  },
+  {
+    "internal_series_code": "BCRA_PRESTAMOS_PESOS_PRIVADOS_TOTAL_ARS_BN_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "109001698.000000"
+  },
+  {
+    "internal_series_code": "BCRA_RESERVAS_USD_M_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "40356.000000"
+  },
+  {
+    "internal_series_code": "BCRA_TASA_BAIBAR_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "26.490000"
+  },
+  {
+    "internal_series_code": "BCRA_TASA_PRESTAMOS_PRIVADOS_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "74.290000"
+  },
+  {
+    "internal_series_code": "BCRA_TC_OFICIAL_A3500_PESOSxUSD_D",
+    "last_obs_time": "2025-11-17T03:00:00.000Z",
+    "last_value": "1401.000000"
+  },
+  {
+    "internal_series_code": "BCRA_TM20_PRIVADOS_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "32.812500"
+  },
+  {
+    "internal_series_code": "BCRA_TM20_PUBLICOS_TNA_D",
+    "last_obs_time": "2025-11-19T03:00:00.000Z",
+    "last_value": "32.312500"
+  }
+]

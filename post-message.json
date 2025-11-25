@@ -1,0 +1,7 @@
+{
+  "event": "projection_update",
+  "dataset_id": "bcra_infomondia_series",
+  "bucket": "ingestor-datasets",
+  "version_manifest_path": "datasets/bcra_infomondia_series/versions/v20251124_233035_525433/manifest.json",
+  "projections_path": "datasets/bcra_infomondia_series/projections/"
+}

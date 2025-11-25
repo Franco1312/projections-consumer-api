@@ -1,6 +1,6 @@
 // file: src/infrastructure/database/migrations/runMigration.ts
 
-import { readFileSync } from "fs";
+import { readFileSync, readdirSync } from "fs";
 import { join, dirname } from "path";
 import { Pool } from "pg";
 import dotenv from "dotenv";
@@ -46,23 +46,41 @@ async function runMigration(): Promise<void> {
 }
 
 async function executeMigration(pool: Pool): Promise<void> {
-
   try {
-    // Try to read from dist first (production), then fallback to src (development)
-    let migrationPath = join(__dirname, "001_create_series_table.sql");
-    
+    // Determine migration directory path
+    let migrationsDir: string;
     try {
-      readFileSync(migrationPath, "utf-8");
+      // Try dist first (production)
+      migrationsDir = __dirname;
+      readdirSync(migrationsDir);
     } catch {
-      // If not found in dist, try src directory
-      migrationPath = join(process.cwd(), "src", "infrastructure", "database", "migrations", "001_create_series_table.sql");
+      // Fallback to src (development)
+      migrationsDir = join(process.cwd(), "src", "infrastructure", "database", "migrations");
     }
-    
-    const migrationFile = readFileSync(migrationPath, "utf-8");
 
-    console.log("Running migration: 001_create_series_table.sql");
-    await pool.query(migrationFile);
-    console.log("Migration completed successfully");
+    // Get all SQL files and sort them
+    const migrationFiles = readdirSync(migrationsDir)
+      .filter((file) => file.endsWith(".sql"))
+      .sort();
+
+    if (migrationFiles.length === 0) {
+      console.log("No migration files found");
+      return;
+    }
+
+    console.log(`Found ${migrationFiles.length} migration file(s)`);
+
+    // Execute each migration in order
+    for (const migrationFile of migrationFiles) {
+      const migrationPath = join(migrationsDir, migrationFile);
+      const migrationContent = readFileSync(migrationPath, "utf-8");
+
+      console.log(`Running migration: ${migrationFile}`);
+      await pool.query(migrationContent);
+      console.log(`Migration ${migrationFile} completed successfully`);
+    }
+
+    console.log("All migrations completed successfully");
   } catch (error) {
     console.error("Migration failed:", error);
     throw error;

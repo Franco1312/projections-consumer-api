@@ -4,12 +4,18 @@ import { Express } from "express";
 import swaggerUi from "swagger-ui-express";
 import { config } from "@/config";
 import { projectionUpdatePaths } from "./swagger/paths/projection-update.paths";
+import { getSeriesWithMetadataPaths } from "./swagger/paths/get-series-with-metadata.paths";
 import {
   projectionUpdateSchema,
   projectionUpdateResponseSchema,
   validationErrorResponseSchema,
   internalErrorResponseSchema,
 } from "./swagger/schemas/projection-update.schema";
+import {
+  seriesWithMetadataSchema,
+  getSeriesWithMetadataResponseSchema,
+  seriesNotFoundResponseSchema,
+} from "./swagger/schemas/get-series-with-metadata.schema";
 
 const swaggerSpec = {
   openapi: "3.0.0",
@@ -26,6 +32,7 @@ const swaggerSpec = {
   ],
   paths: {
     ...projectionUpdatePaths,
+    ...getSeriesWithMetadataPaths,
   },
   components: {
     schemas: {
@@ -33,6 +40,9 @@ const swaggerSpec = {
       ProjectionUpdateResponse: projectionUpdateResponseSchema,
       ValidationErrorResponse: validationErrorResponseSchema,
       InternalErrorResponse: internalErrorResponseSchema,
+      SeriesWithMetadata: seriesWithMetadataSchema,
+      GetSeriesWithMetadataResponse: getSeriesWithMetadataResponseSchema,
+      SeriesNotFoundResponse: seriesNotFoundResponseSchema,
     },
   },
 };

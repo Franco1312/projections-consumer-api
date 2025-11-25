@@ -7,6 +7,7 @@ import { registerHealthRoutes } from "@/interfaces/http/routes/health.routes";
 import { registerProjectionUpdateRoutes } from "@/interfaces/http/routes/projection-update.routes";
 import { registerGetSeriesRoutes } from "@/interfaces/http/routes/get-series.routes";
 import { registerGetLatestSeriesRoutes } from "@/interfaces/http/routes/get-latest-series.routes";
+import { registerGetSeriesWithMetadataRoutes } from "@/interfaces/http/routes/get-series-with-metadata.routes";
 import { setupSwagger } from "@/infrastructure/http/swagger.config";
 
 export function createApp(): Express {
@@ -31,6 +32,7 @@ export function createApp(): Express {
   registerProjectionUpdateRoutes(router);
   registerGetSeriesRoutes(router);
   registerGetLatestSeriesRoutes(router);
+  registerGetSeriesWithMetadataRoutes(router);
   app.use(router);
 
   setupSwagger(app);
