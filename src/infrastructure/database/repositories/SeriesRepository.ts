@@ -89,6 +89,33 @@ class PostgresSeriesRepository implements SeriesRepository {
 
     return rows.map((row) => seriesAdapter.toDomain(row));
   }
+
+  async findLatestByCode(code: string): Promise<Series | null> {
+    const query = `
+      SELECT 
+        id,
+        obs_time,
+        internal_series_code,
+        value,
+        unit,
+        frequency,
+        collection_date,
+        created_at,
+        updated_at
+      FROM series
+      WHERE internal_series_code = $1
+      ORDER BY obs_time DESC
+      LIMIT 1
+    `;
+
+    const rows = await databaseClient.query<SeriesDbEntity>(query, [code]);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return seriesAdapter.toDomain(rows[0]);
+  }
 }
 
 export const defaultSeriesRepository = new PostgresSeriesRepository();

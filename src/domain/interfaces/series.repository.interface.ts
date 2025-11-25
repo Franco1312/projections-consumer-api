@@ -9,5 +9,6 @@ export interface SeriesRepository {
     startDate: string;
     endDate: string;
   }): Promise<Series[]>;
+  findLatestByCode(code: string): Promise<Series | null>;
 }
 
