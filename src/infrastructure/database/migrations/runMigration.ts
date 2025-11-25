@@ -8,26 +8,44 @@ import dotenv from "dotenv";
 dotenv.config();
 
 async function runMigration(): Promise<void> {
-  const host = process.env.DB_HOST;
-  const port = process.env.DB_PORT || "5432";
-  const user = process.env.DB_USER;
-  const password = process.env.DB_PASSWORD;
-  const databaseName = process.env.DB_NAME || "projections-consumer-api";
+  const connectionString = process.env.DATABASE_URL;
 
-  if (!host || !user || !password) {
-    throw new Error(
-      "Missing required database environment variables: DB_HOST, DB_USER, DB_PASSWORD"
-    );
+  if (!connectionString) {
+    // Fallback to individual variables
+    const host = process.env.DB_HOST;
+    const port = process.env.DB_PORT || "5432";
+    const user = process.env.DB_USER;
+    const password = process.env.DB_PASSWORD;
+    const databaseName = process.env.DB_NAME || "projections-consumer-api";
+
+    if (!host || !user || !password) {
+      throw new Error(
+        "Missing required database configuration. Provide either DATABASE_URL or DB_HOST, DB_USER, DB_PASSWORD"
+      );
+    }
+
+    const pool = new Pool({
+      host,
+      port: parseInt(port, 10),
+      user,
+      password,
+      database: databaseName,
+      ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+    });
+
+    await executeMigration(pool);
+    return;
   }
 
   const pool = new Pool({
-    host,
-    port: parseInt(port, 10),
-    user,
-    password,
-    database: databaseName,
-    ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
+    connectionString,
+    ssl: { rejectUnauthorized: false },
   });
+
+  await executeMigration(pool);
+}
+
+async function executeMigration(pool: Pool): Promise<void> {
 
   try {
     // Try to read from dist first (production), then fallback to src (development)

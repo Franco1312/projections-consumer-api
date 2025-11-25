@@ -10,7 +10,7 @@ export class PostgresClient implements DatabaseClient {
   private isConnectedFlag: boolean = false;
 
   constructor() {
-    const connectionString = this.buildConnectionString();
+    const connectionString = this.getConnectionString();
     
     this.pool = new Pool({
       connectionString,
@@ -33,7 +33,13 @@ export class PostgresClient implements DatabaseClient {
     });
   }
 
-  private buildConnectionString(): string {
+  private getConnectionString(): string {
+    // Prefer DATABASE_URL if provided (e.g., from Render)
+    if (process.env.DATABASE_URL) {
+      return process.env.DATABASE_URL;
+    }
+
+    // Fallback to building from individual variables
     const host = process.env.DB_HOST;
     const port = process.env.DB_PORT || "5432";
     const database = process.env.DB_NAME;
@@ -42,7 +48,7 @@ export class PostgresClient implements DatabaseClient {
 
     if (!host || !database || !user || !password) {
       throw new Error(
-        "Missing required database environment variables: DB_HOST, DB_NAME, DB_USER, DB_PASSWORD"
+        "Missing required database configuration. Provide either DATABASE_URL or DB_HOST, DB_NAME, DB_USER, DB_PASSWORD"
       );
     }
 
