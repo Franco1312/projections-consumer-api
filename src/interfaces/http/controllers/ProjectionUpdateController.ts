@@ -1,15 +1,16 @@
 // file: src/interfaces/http/controllers/ProjectionUpdateController.ts
 
 import { Request, Response } from "express";
-import { ProcessProjectionUpdateUseCase } from "@/application/use-cases/ProcessProjectionUpdate.use-case";
+import { defaultProcessProjectionUpdateUseCase } from "@/application/use-cases/ProcessProjectionUpdate.use-case";
 import { ProjectionUpdateEvent } from "@/domain/events/ProjectionUpdateEvent";
 import { logger } from "@/infrastructure/logger/PinoLogger";
 import { LOG_EVENTS } from "@/infrastructure/logger/LOG_EVENTS";
+import { ProcessProjectionUpdateUseCase } from "@/application/use-cases/ProcessProjectionUpdate.use-case";
 
-export class ProjectionUpdateController {
+class ProjectionUpdateController {
   constructor(
-    private readonly processProjectionUpdateUseCase: ProcessProjectionUpdateUseCase
-  ) {}
+    private readonly processProjectionUpdateUseCase: ProcessProjectionUpdateUseCase = defaultProcessProjectionUpdateUseCase
+  ) { }
 
   async handle(req: Request, res: Response): Promise<void> {
     try {
@@ -35,3 +36,5 @@ export class ProjectionUpdateController {
     }
   }
 }
+
+export const defaultProjectionUpdateController = new ProjectionUpdateController();

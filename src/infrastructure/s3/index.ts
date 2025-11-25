@@ -1,7 +1,6 @@
 // file: src/infrastructure/s3/index.ts
 
-import { S3Client } from "./S3Client";
-import { config } from "@/config";
+import { defaultS3Client } from "./S3Client";
 
-export const s3Service = new S3Client(config.s3.region);
+export const s3Service = defaultS3Client;
 

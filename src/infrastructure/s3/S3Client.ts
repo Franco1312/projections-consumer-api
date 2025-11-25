@@ -2,8 +2,9 @@
 
 import { S3Client as AWSS3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import { S3Service } from "@/domain/interfaces/s3.interface";
+import { config } from "@/config";
 
-export class S3Client implements S3Service {
+class S3Client implements S3Service {
   private client: AWSS3Client;
 
   constructor(region: string) {
@@ -50,4 +51,6 @@ export class S3Client implements S3Service {
     return JSON.parse(content) as T;
   }
 }
+
+export const defaultS3Client = new S3Client(config.s3.region);
 
