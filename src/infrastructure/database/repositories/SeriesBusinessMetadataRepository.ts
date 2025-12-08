@@ -15,6 +15,7 @@ class PostgresSeriesBusinessMetadataRepository
     const query = `
       SELECT 
         internal_series_code,
+        title,
         description,
         methodology,
         source
@@ -33,6 +34,25 @@ class PostgresSeriesBusinessMetadataRepository
     }
 
     return seriesBusinessMetadataAdapter.toDomain(rows[0]);
+  }
+
+  async findAll(): Promise<SeriesWithMetadata[]> {
+    const query = `
+      SELECT 
+        internal_series_code,
+        title,
+        description,
+        methodology,
+        source
+      FROM series_bussines_metadata
+      ORDER BY internal_series_code ASC
+    `;
+
+    const rows = await databaseClient.query<SeriesBusinessMetadataDbEntity>(
+      query
+    );
+
+    return rows.map((row) => seriesBusinessMetadataAdapter.toDomain(row));
   }
 }
 

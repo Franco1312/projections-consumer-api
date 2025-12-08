@@ -8,6 +8,7 @@ import { registerProjectionUpdateRoutes } from "@/interfaces/http/routes/project
 import { registerGetSeriesRoutes } from "@/interfaces/http/routes/get-series.routes";
 import { registerGetLatestSeriesRoutes } from "@/interfaces/http/routes/get-latest-series.routes";
 import { registerGetSeriesWithMetadataRoutes } from "@/interfaces/http/routes/get-series-with-metadata.routes";
+import { registerGetAllSeriesMetadataRoutes } from "@/interfaces/http/routes/get-all-series-metadata.routes";
 import { registerCreateSeriesRoutes } from "@/interfaces/http/routes/create-series.routes";
 import { setupSwagger } from "@/infrastructure/http/swagger.config";
 
@@ -33,6 +34,7 @@ export function createApp(): Express {
   registerProjectionUpdateRoutes(router);
   registerGetSeriesRoutes(router);
   registerGetLatestSeriesRoutes(router);
+  registerGetAllSeriesMetadataRoutes(router); // Debe ir antes de la ruta con parámetro
   registerGetSeriesWithMetadataRoutes(router);
   registerCreateSeriesRoutes(router);
   app.use(router);
