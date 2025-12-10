@@ -1,6 +1,7 @@
 // file: src/infrastructure/database/repositories/adapters/SeriesAdapter.ts
 
 import { Series } from "@/domain/entities/Series";
+import { SeriesWithVariation } from "@/domain/entities/SeriesWithVariation";
 
 export interface SeriesDbEntity {
   id?: number;
@@ -12,6 +13,13 @@ export interface SeriesDbEntity {
   collection_date: Date;
   created_at?: Date;
   updated_at?: Date;
+}
+
+export interface SeriesWithVariationDbEntity extends SeriesDbEntity {
+  change?: number | null;
+  change_percent?: number | null;
+  previous_value?: number | null;
+  previous_obs_time?: Date | null;
 }
 
 class SeriesAdapter {
@@ -40,6 +48,26 @@ class SeriesAdapter {
       collection_date: dbEntity.collection_date.toISOString(),
       created_at: dbEntity.created_at?.toISOString(),
       updated_at: dbEntity.updated_at?.toISOString(),
+    };
+  }
+
+  toDomainWithVariation(
+    dbEntity: SeriesWithVariationDbEntity
+  ): SeriesWithVariation {
+    return {
+      id: dbEntity.id,
+      obs_time: dbEntity.obs_time.toISOString(),
+      internal_series_code: dbEntity.internal_series_code,
+      value: dbEntity.value,
+      unit: dbEntity.unit,
+      frequency: dbEntity.frequency,
+      collection_date: dbEntity.collection_date.toISOString(),
+      created_at: dbEntity.created_at?.toISOString(),
+      updated_at: dbEntity.updated_at?.toISOString(),
+      change: dbEntity.change ?? undefined,
+      change_percent: dbEntity.change_percent ?? undefined,
+      previous_value: dbEntity.previous_value ?? undefined,
+      previous_obs_time: dbEntity.previous_obs_time?.toISOString(),
     };
   }
 }
