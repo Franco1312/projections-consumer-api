@@ -2,8 +2,13 @@
 
 import { SeriesRepository } from "@/domain/interfaces/series.repository.interface";
 import { Series } from "@/domain/entities/Series";
+import { SeriesWithVariation } from "@/domain/entities/SeriesWithVariation";
 import { databaseClient } from "@/infrastructure/database";
-import { seriesAdapter, SeriesDbEntity } from "./adapters/SeriesAdapter";
+import {
+  seriesAdapter,
+  SeriesDbEntity,
+  SeriesWithVariationDbEntity,
+} from "./adapters/SeriesAdapter";
 
 class PostgresSeriesRepository implements SeriesRepository {
   async insertMany(series: Series[]): Promise<void> {
@@ -117,42 +122,109 @@ class PostgresSeriesRepository implements SeriesRepository {
     return seriesAdapter.toDomain(rows[0]);
   }
 
-  async findPreviousByCodeAndObsTime(
-    code: string,
-    obsTime: string,
-    frequency: string
-  ): Promise<Series | null> {
-    // Buscar el valor más reciente anterior a la fecha actual
-    // Para series mensuales (M), esto será el mes anterior
-    // Para series diarias (D), esto será el día anterior
+  async findLatestWithVariationByCode(
+    code: string
+  ): Promise<SeriesWithVariation | null> {
+    // Query que calcula la variación directamente en SQL
+    // Para series diarias (D): compara con el último valor del día anterior
+    // Para series mensuales (M): compara con el último valor del mes anterior
     const query = `
+      WITH latest_record AS (
+        SELECT 
+          id,
+          obs_time,
+          internal_series_code,
+          value,
+          unit,
+          frequency,
+          collection_date,
+          created_at,
+          updated_at
+        FROM series
+        WHERE internal_series_code = $1
+        ORDER BY obs_time DESC
+        LIMIT 1
+      ),
+      previous_record_daily AS (
+        SELECT 
+          value AS previous_value,
+          obs_time AS previous_obs_time
+        FROM series
+        WHERE internal_series_code = $1
+          AND DATE(obs_time) < DATE((SELECT obs_time FROM latest_record))
+        ORDER BY obs_time DESC
+        LIMIT 1
+      ),
+      previous_record_monthly AS (
+        SELECT 
+          value AS previous_value,
+          obs_time AS previous_obs_time
+        FROM series
+        WHERE internal_series_code = $1
+          AND DATE_TRUNC('month', obs_time) < DATE_TRUNC('month', (SELECT obs_time FROM latest_record))
+        ORDER BY obs_time DESC
+        LIMIT 1
+      ),
+      previous_record_other AS (
+        SELECT 
+          value AS previous_value,
+          obs_time AS previous_obs_time
+        FROM series
+        WHERE internal_series_code = $1
+          AND obs_time < (SELECT obs_time FROM latest_record)
+        ORDER BY obs_time DESC
+        LIMIT 1
+      ),
+      previous_record AS (
+        SELECT 
+          COALESCE(
+            CASE WHEN (SELECT frequency FROM latest_record) = 'D' THEN (SELECT previous_value FROM previous_record_daily) END,
+            CASE WHEN (SELECT frequency FROM latest_record) = 'M' THEN (SELECT previous_value FROM previous_record_monthly) END,
+            (SELECT previous_value FROM previous_record_other)
+          ) AS previous_value,
+          COALESCE(
+            CASE WHEN (SELECT frequency FROM latest_record) = 'D' THEN (SELECT previous_obs_time FROM previous_record_daily) END,
+            CASE WHEN (SELECT frequency FROM latest_record) = 'M' THEN (SELECT previous_obs_time FROM previous_record_monthly) END,
+            (SELECT previous_obs_time FROM previous_record_other)
+          ) AS previous_obs_time
+      )
       SELECT 
-        id,
-        obs_time,
-        internal_series_code,
-        value,
-        unit,
-        frequency,
-        collection_date,
-        created_at,
-        updated_at
-      FROM series
-      WHERE internal_series_code = $1
-        AND obs_time < $2::timestamptz
-      ORDER BY obs_time DESC
-      LIMIT 1
+        lr.id,
+        lr.obs_time,
+        lr.internal_series_code,
+        lr.value,
+        lr.unit,
+        lr.frequency,
+        lr.collection_date,
+        lr.created_at,
+        lr.updated_at,
+        CASE 
+          WHEN lr.frequency IN ('M', 'D') AND pr.previous_value IS NOT NULL 
+          THEN lr.value - pr.previous_value 
+          ELSE NULL 
+        END AS change,
+        CASE 
+          WHEN lr.unit = 'pct' THEN NULL
+          WHEN lr.frequency IN ('M', 'D') AND pr.previous_value IS NOT NULL AND pr.previous_value != 0
+          THEN ((lr.value - pr.previous_value) / pr.previous_value) * 100
+          ELSE NULL 
+        END AS change_percent,
+        pr.previous_value,
+        pr.previous_obs_time
+      FROM latest_record lr
+      CROSS JOIN previous_record pr
     `;
 
-    const rows = await databaseClient.query<SeriesDbEntity>(query, [
-      code,
-      new Date(obsTime),
-    ]);
+    const rows = await databaseClient.query<SeriesWithVariationDbEntity>(
+      query,
+      [code]
+    );
 
     if (rows.length === 0) {
       return null;
     }
 
-    return seriesAdapter.toDomain(rows[0]);
+    return seriesAdapter.toDomainWithVariation(rows[0]);
   }
 }
 
