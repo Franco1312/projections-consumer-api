@@ -10,5 +10,10 @@ export interface SeriesRepository {
     endDate: string;
   }): Promise<Series[]>;
   findLatestByCode(code: string): Promise<Series | null>;
+  findPreviousByCodeAndObsTime(
+    code: string,
+    obsTime: string,
+    frequency: string
+  ): Promise<Series | null>;
 }
 

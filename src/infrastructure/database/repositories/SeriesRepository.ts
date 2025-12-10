@@ -116,6 +116,44 @@ class PostgresSeriesRepository implements SeriesRepository {
 
     return seriesAdapter.toDomain(rows[0]);
   }
+
+  async findPreviousByCodeAndObsTime(
+    code: string,
+    obsTime: string,
+    frequency: string
+  ): Promise<Series | null> {
+    // Buscar el valor más reciente anterior a la fecha actual
+    // Para series mensuales (M), esto será el mes anterior
+    // Para series diarias (D), esto será el día anterior
+    const query = `
+      SELECT 
+        id,
+        obs_time,
+        internal_series_code,
+        value,
+        unit,
+        frequency,
+        collection_date,
+        created_at,
+        updated_at
+      FROM series
+      WHERE internal_series_code = $1
+        AND obs_time < $2::timestamptz
+      ORDER BY obs_time DESC
+      LIMIT 1
+    `;
+
+    const rows = await databaseClient.query<SeriesDbEntity>(query, [
+      code,
+      new Date(obsTime),
+    ]);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return seriesAdapter.toDomain(rows[0]);
+  }
 }
 
 export const defaultSeriesRepository = new PostgresSeriesRepository();
